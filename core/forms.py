@@ -8,12 +8,12 @@ class UserRegisterForm(UserCreationForm):
     class Meta:
         model = User
         fields = ['username','first_name','last_name','email','password1','password2']
-        # labels = {
-        #     'username':'Username',
-        #     'first_name':'First Name',
-        #     'last_name':'Last Name',
-        #     'email':'E-Mail',
-        # }
+        labels = {
+            'username':'Username',
+            'first_name':'First Name',
+            'last_name':'Last Name',
+            'email':'E-Mail',
+        }
         widgets = {
             'username':TextInput(attrs={'class':'bg-gray-200 mb-2 shadow-none  dark:bg-gray-800','style':'border: 1px solid #d3d5d8 !important;','placeholder':'Username'}),
             'first_name':TextInput(attrs={'class':'bg-gray-200 mb-2 shadow-none  dark:bg-gray-800','style':'border: 1px solid #d3d5d8 !important;','placeholder':'First Name'}),
