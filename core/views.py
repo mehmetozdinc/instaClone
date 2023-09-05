@@ -2,7 +2,7 @@ from django.shortcuts import redirect, render
 from django.contrib.auth import authenticate,login, logout
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
-from .forms import UserRegisterForm
+from .forms import UserRegisterForm, UserProfileForm
 from django.contrib.auth.models import User
 
 
@@ -53,3 +53,9 @@ def signup(request):
         form = UserRegisterForm()
         return render(request,'signup.html',{'form':form})
 
+
+def setting(request):
+    form = UserProfileForm()
+    
+
+    return render(request, 'setting.html',{'form':form})
