@@ -10,6 +10,7 @@ class ProfileUser(models.Model):
     id_user = models.IntegerField()
     bio = models.TextField()
     location = models.CharField(max_length=150)
+    working_at = models.CharField(max_length=150)
     profileimg = models.ImageField(upload_to='profile_imgs',default='blank_profile.jpg')
 
     def __str__(self):

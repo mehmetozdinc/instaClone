@@ -1,8 +1,9 @@
-from django.forms import ModelForm,TextInput,EmailInput, PasswordInput
+from django.forms import ModelForm,TextInput,EmailInput, PasswordInput, Textarea
 from django.contrib.auth.models import User
 from django.contrib.auth.forms import UserCreationForm
 from django.core.exceptions import ValidationError
-
+from .models import ProfileUser
+from django.utils.translation import gettext_lazy as _
 
 class UserRegisterForm(UserCreationForm):
     class Meta:
@@ -37,5 +38,18 @@ class UserRegisterForm(UserCreationForm):
         self.fields['password2'].widget.attrs['placeholder'] = 'Confirm Password'
         self.fields['password2'].label = ''
         self.fields['password2'].help_text = '<span class="form-text text-muted"><small>Enter the same password as before, for verification.</small></span>'
-    
+
+
+class UserProfileForm(ModelForm):
+    class Meta:
+        model = ProfileUser
+        fields = ["bio", "location", "working_at", ]
+        labels = {"bio": "bio",
+                  "location": "location",
+                  "working_at":" working_at"
+                  }
+        widgets = {
+            'bio':Textarea(attrs={'class':'shadow-none bg-gray-100'}),
+            'location':TextInput(attrs={'class':'shadow-none bg-gray-100'}),
+        }    
     
