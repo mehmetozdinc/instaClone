@@ -53,7 +53,6 @@ class UserProfileForm(ModelForm):
             'bio':Textarea(attrs={'class':'shadow-none bg-gray-100'}),
             'location':TextInput(attrs={'class':'shadow-none bg-gray-100'}),
             'working_at':TextInput(attrs={'class':'shadow-none bg-gray-100'}),
-            'profileimg':ImageField(),
         }    
 
 
