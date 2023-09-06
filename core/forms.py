@@ -1,4 +1,4 @@
-from django.forms import ModelForm,TextInput,EmailInput, PasswordInput, Textarea
+from django.forms import ModelForm,TextInput,EmailInput, PasswordInput, Textarea, ImageField
 from django.contrib.auth.models import User
 from django.contrib.auth.forms import UserCreationForm
 from django.core.exceptions import ValidationError
@@ -43,13 +43,32 @@ class UserRegisterForm(UserCreationForm):
 class UserProfileForm(ModelForm):
     class Meta:
         model = ProfileUser
-        fields = ["bio", "location", "working_at", ]
-        labels = {"bio": "bio",
-                  "location": "location",
-                  "working_at":" working_at"
+        fields = ['bio', 'location', 'working_at', 'profileimg']
+        labels = {"bio": "About Me",
+                  "location": "Location",
+                  "working_at":"Working at",
+                  "profileimg": "Profile Image",
                   }
         widgets = {
             'bio':Textarea(attrs={'class':'shadow-none bg-gray-100'}),
             'location':TextInput(attrs={'class':'shadow-none bg-gray-100'}),
+            'working_at':TextInput(attrs={'class':'shadow-none bg-gray-100'}),
+            'profileimg':ImageField(),
         }    
-    
+
+
+class UserPersonalProfileForm(ModelForm):
+    class Meta:
+        model = User
+        fields = ['username','first_name','last_name','email',]
+        labels = {"username": "Username",
+                  "first_name": "First Name",
+                  "last_name": "Last Name",
+                  "email": "E-mail",}
+        widgets = {
+            'username':TextInput(attrs={'class':'shadow-none bg-gray-100'}),
+            'first_name':TextInput(attrs={'class':'shadow-none bg-gray-100'}),
+            'last_name':TextInput(attrs={'class':'shadow-none bg-gray-100'}),
+            'email':EmailInput(attrs={'class':'shadow-none bg-gray-100'}),
+        }    
+
