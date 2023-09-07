@@ -6,5 +6,5 @@ urlpatterns = [
     path('signin',views.signin,name='signin'),
     path('signout',views.signout,name='signout'),
     path('signup',views.signup,name='signup'),
-    path('setting',views.setting,name='setting'),
+    path('setting/<int:pk>',views.setting,name='setting'),
 ]
