@@ -4,6 +4,7 @@ from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 from .forms import UserRegisterForm, UserProfileForm, UserPersonalProfileForm
 from django.contrib.auth.models import User
+from .models import ProfileUser
 
 
 
@@ -52,10 +53,24 @@ def signup(request):
     else:
         form = UserRegisterForm()
         return render(request,'signup.html',{'form':form})
-
-
-def setting(request):
-    form = UserProfileForm()
     
 
-    return render(request, 'setting.html',{'form':form})
+@login_required(login_url='signin')
+def setting(request, pk):
+    if request.method == 'POST':
+        form1 = UserProfileForm(request.POST)
+        form2 = UserPersonalProfileForm(request.POST)
+        if form1.is_valid() and form2.is_valid():
+            form1.save() 
+            form2.save()
+            messages.success(request,"Kayıt Başarılı!")
+            return redirect('index')
+        else:
+            return render(request, 'setting.html',{'form1':form1, 'form2':form2})
+    else:
+        current_record1 = User.objects.get(id=pk)
+        current_record2 = ProfileUser.objects.get(user=current_record1)
+       
+        form1 = UserProfileForm(instance=current_record1)
+        form2 = UserPersonalProfileForm(instance=current_record2)
+        return render(request, 'setting.html',{'form1':form1, 'form2':form2})
