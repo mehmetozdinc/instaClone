@@ -17,15 +17,16 @@ def index(request):
         'current_profile':current_profile,
         'upload_form':upload_form
     }
-    print(request.FILES.get('image2'))
+
     if upload_form.is_valid():
-        print('-------------------------------------------------')
-        if request.FILES.get('image2') != None:
-            image = request.FILES.get('image2')
-            caption = request.POST['post_caption']
-            PostModel.objects.create(post_img=image,post_caption=caption,post_owner=current_user).save()
-            messages.success(request,"Kayıt Başarılı!")
-            return redirect('signup')
+        instance = upload_form.save(commit=False)
+        instance.post_owner = current_user
+        instance.save()
+        # image = instance.post_img
+        # caption = instance.post_caption
+        # PostModel.objects.create(post_img=image,post_caption=caption,post_owner=current_user).save()
+        messages.success(request,"Picture has uploaded!!!")
+        return redirect('index')
         
     return render(request,'index.html',context)
 
