@@ -2,15 +2,32 @@ from django.shortcuts import redirect, render
 from django.contrib.auth import authenticate,login, logout
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
-from .forms import UserRegisterForm, UserProfileForm, UserPersonalProfileForm
+from .forms import UserRegisterForm, UserProfileForm, UserPersonalProfileForm,PostUploadForm
 from django.contrib.auth.models import User
-from .models import ProfileUser
+from .models import ProfileUser,UserFollowing,PostModel
 
 
 
 @login_required(login_url='signin')
 def index(request):
-    return render(request,'index.html')
+    current_user = request.user
+    current_profile = ProfileUser.objects.get(user=current_user)
+    upload_form = PostUploadForm(request.POST or None,request.FILES)
+    context = {
+        'current_profile':current_profile,
+        'upload_form':upload_form
+    }
+    print(request.FILES.get('image2'))
+    if upload_form.is_valid():
+        print('-------------------------------------------------')
+        if request.FILES.get('image2') != None:
+            image = request.FILES.get('image2')
+            caption = request.POST['post_caption']
+            PostModel.objects.create(post_img=image,post_caption=caption,post_owner=current_user).save()
+            messages.success(request,"Kayıt Başarılı!")
+            return redirect('signup')
+        
+    return render(request,'index.html',context)
 
 
 def signin(request):
@@ -82,3 +99,33 @@ def setting(request, pk):
     else:
         return render(request, 'error.html')
 
+@login_required(login_url='signin')
+def profile(request, pk):
+    current_user = User.objects.get(username=pk)
+    post_number = current_user.poster.all().count()
+    current_active_user = request.user
+    current_profile = ProfileUser.objects.get(user=current_user)
+    following_num = current_user.following.all().count()
+    followers_num = current_user.followers.all().count()
+    takip = current_user.followers.filter(following_user_id=current_user).exists()
+    post_content = current_user.poster.all()
+    context = {
+        'current_user':current_user,
+        'following_num':following_num,
+        'followers_num':followers_num,
+        'current_profile':current_profile,
+        'takip':takip,
+        'post_number':post_number,
+        'post_content':post_content
+    }
+    if request.method == 'POST':
+        if takip:
+           current_user.followers.get(following_user_id=current_user).delete()
+           context['followers_num'] -=1
+           context['takip'] = False
+        else:
+            UserFollowing.objects.create(user_id=current_active_user,following_user_id=current_user).save()
+            context['followers_num'] +=1
+            context['takip'] = True
+        return render(request,'profile.html',context)
+    return render(request,'profile.html',context)

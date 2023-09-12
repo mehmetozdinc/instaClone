@@ -1,8 +1,8 @@
-from django.forms import ModelForm,TextInput,EmailInput, PasswordInput, Textarea, ImageField
+from django.forms import ModelForm,TextInput,EmailInput, PasswordInput, Textarea
 from django.contrib.auth.models import User
 from django.contrib.auth.forms import UserCreationForm
 from django.core.exceptions import ValidationError
-from .models import ProfileUser
+from .models import ProfileUser,PostModel
 from django.utils.translation import gettext_lazy as _
 
 class UserRegisterForm(UserCreationForm):
@@ -71,3 +71,13 @@ class UserPersonalProfileForm(ModelForm):
             'email':EmailInput(attrs={'class':'shadow-none bg-gray-100'}),
         }    
 
+
+class PostUploadForm(ModelForm):
+    class Meta:
+        model = PostModel
+        fields = ['post_img','post_caption']
+        labels = {'post_caption' : 'Your Comments!'}
+        widgets = {
+                        
+            'post_caption':Textarea(attrs={'class':'shadow-none bg-gray-100'})
+        }    

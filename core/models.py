@@ -1,5 +1,6 @@
 from django.db import models
 from django.contrib.auth.models import User
+import uuid
 
 User._meta.get_field('email')._unique = True
 
@@ -16,3 +17,30 @@ class ProfileUser(models.Model):
     def __str__(self):
         return self.user.username
 
+class UserFollowing(models.Model):
+
+    user_id = models.ForeignKey(User, related_name="following", on_delete=models.CASCADE)
+    following_user_id = models.ForeignKey(User, related_name="followers", on_delete=models.CASCADE)
+    created = models.DateTimeField(auto_now_add=True, db_index=True)
+
+    class Meta:
+        constraints = [
+            models.UniqueConstraint(fields=['user_id','following_user_id'],  name="unique_followers")
+        ]
+
+        ordering = ["-created"]
+
+    def __str__(self):
+        return f"{self.user_id} follows {self.following_user_id}"
+
+class PostModel(models.Model):
+    id = models.UUIDField(primary_key=True,default=uuid.uuid4)
+    post_img = models.ImageField(upload_to='post_imgs')
+    post_caption = models.TextField()
+    post_date = models.DateTimeField(auto_now_add=True)
+    post_owner = models.ForeignKey(User,related_name='poster',on_delete=models.CASCADE)
+
+    def __str__(self):
+        return f"{self.post_owner} uploaded new photo at {self.post_date}"
+    class Meta:
+        ordering = ('-post_date',)
