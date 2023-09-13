@@ -44,3 +44,13 @@ class PostModel(models.Model):
         return f"{self.post_owner} uploaded new photo at {self.post_date}"
     class Meta:
         ordering = ('-post_date',)
+
+class LikeModel(models.Model):
+    like_owner = models.ForeignKey(User,related_name='liker',on_delete=models.CASCADE)
+    liked_post = models.ForeignKey(PostModel,related_name='liked',on_delete=models.CASCADE)
+    liked_at = models.DateTimeField(auto_now_add=True)
+
+    def __str__(self):
+        return f"{self.like_owner} liked {self.liked_post.post_owner}'s photo at {self.liked_at}"
+    class Meta:
+        ordering = ('-liked_at',)

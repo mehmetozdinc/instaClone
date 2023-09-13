@@ -12,10 +12,29 @@ from .models import ProfileUser,UserFollowing,PostModel
 def index(request):
     current_user = request.user
     current_profile = ProfileUser.objects.get(user=current_user)
+    all_profiles = ProfileUser.objects.none()
     upload_form = PostUploadForm(request.POST or None,request.FILES)
+
+
+    posts = current_user.poster.all()
+    x = current_user.following.all()
+    followings = []
+
+    for i in x:
+        followings.append(i.following_user_id)
+    
+    for i in followings:
+        posts |= i.poster.all()
+    
+    for i in posts:
+        if ProfileUser.objects.filter(user=i.post_owner) not in all_profiles:
+            all_profiles |= ProfileUser.objects.filter(user=i.post_owner)
+    print(all_profiles.filter(user=current_user))
     context = {
         'current_profile':current_profile,
-        'upload_form':upload_form
+        'upload_form':upload_form,
+        'posts':posts,
+        'all_profiles':all_profiles
     }
 
     if upload_form.is_valid():
