@@ -12,38 +12,31 @@ from .models import ProfileUser,UserFollowing,PostModel
 def index(request):
     current_user = request.user
     current_profile = ProfileUser.objects.get(user=current_user)
-    all_profiles = ProfileUser.objects.none()
     upload_form = PostUploadForm(request.POST or None,request.FILES)
+    posts = PostModel.objects.filter(post_owner__userfollowing__user_id=current_user)
+    # x = current_user.following.all()
+    # followings = []
 
-
-    posts = current_user.poster.all()
-    x = current_user.following.all()
-    followings = []
-
-    for i in x:
-        followings.append(i.following_user_id)
+    # for i in x:
+    #     followings.append(i.following_user_id)
     
-    for i in followings:
-        posts |= i.poster.all()
+    # for i in followings:
+    #     posts |= i.poster.all()
+
+
     
-    for i in posts:
-        if ProfileUser.objects.filter(user=i.post_owner) not in all_profiles:
-            all_profiles |= ProfileUser.objects.filter(user=i.post_owner)
-    print(all_profiles.filter(user=current_user))
+    
     context = {
         'current_profile':current_profile,
         'upload_form':upload_form,
         'posts':posts,
-        'all_profiles':all_profiles
+        
     }
 
     if upload_form.is_valid():
         instance = upload_form.save(commit=False)
         instance.post_owner = current_user
         instance.save()
-        # image = instance.post_img
-        # caption = instance.post_caption
-        # PostModel.objects.create(post_img=image,post_caption=caption,post_owner=current_user).save()
         messages.success(request,"Picture has uploaded!!!")
         return redirect('index')
         
@@ -85,6 +78,7 @@ def signup(request):
             form.save()
             current_user = User.objects.get(email=form.cleaned_data['email'])
             ProfileUser.objects.create(user=current_user,id_user=current_user.id)
+            UserFollowing.objects.create(user_id=current_user,following_user_id=current_user)
             messages.success(request,"Kayıt Başarılı! Lütfen Giriş Yapınız!!!")
             return redirect('signin')
         else:
@@ -125,9 +119,9 @@ def profile(request, pk):
     post_number = current_user.poster.all().count()
     current_active_user = request.user
     current_profile = ProfileUser.objects.get(user=current_user)
-    following_num = current_user.following.all().count()
-    followers_num = current_user.followers.all().count()
-    takip = current_user.followers.filter(following_user_id=current_user).exists()
+    following_num = current_user.following.all().count()-1
+    followers_num = current_user.followers.all().count()-1
+    takip = current_user.following.filter(following_user_id=current_user).exists()
     post_content = current_user.poster.all()
     context = {
         'current_user':current_user,

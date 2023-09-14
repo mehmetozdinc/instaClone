@@ -7,7 +7,7 @@ User._meta.get_field('email')._unique = True
 
 
 class ProfileUser(models.Model):
-    user = models.ForeignKey(User,on_delete=models.CASCADE)
+    user = models.OneToOneField(User,on_delete=models.CASCADE)
     id_user = models.IntegerField()
     bio = models.TextField(blank=True, null=True)
     location = models.CharField(max_length=150, blank=True, null=True)

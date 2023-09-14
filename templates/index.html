@@ -205,7 +205,8 @@
                                     <div class="flex flex-1 items-center space-x-4">
                                         <a href="{% url 'profile' post.post_owner.username %}">
                                             <div class="bg-gradient-to-tr from-yellow-600 to-pink-600 p-0.5 rounded-full">  
-                                                <img src="{{all_profiles.get(user=post.post_owner).profileimg.url}}" class="bg-gray-200 border border-white rounded-full w-8 h-8">
+                                                
+                                                <img src="{{post.post_owner.profileuser.profileimg.url}}" class="bg-gray-200 border border-white rounded-full w-8 h-8">
                                             </div>
                                         </a>
                                         <a href="{% url 'profile' post.post_owner.username %}">
