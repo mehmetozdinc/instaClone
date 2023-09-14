@@ -27,6 +27,7 @@ class UserFollowing(models.Model):
         constraints = [
             models.UniqueConstraint(fields=['user_id','following_user_id'],  name="unique_followers")
         ]
+        unique_together = (('user_id', 'following_user_id'), )
 
         ordering = ["-created"]
 

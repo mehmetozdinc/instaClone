@@ -13,18 +13,9 @@ def index(request):
     current_user = request.user
     current_profile = ProfileUser.objects.get(user=current_user)
     upload_form = PostUploadForm(request.POST or None,request.FILES)
-    posts = PostModel.objects.filter(post_owner__userfollowing__user_id=current_user)
-    # x = current_user.following.all()
-    # followings = []
-
-    # for i in x:
-    #     followings.append(i.following_user_id)
-    
-    # for i in followings:
-    #     posts |= i.poster.all()
-
-
-    
+    followed_people = UserFollowing.objects.filter(user_id=current_user).values('following_user_id')
+    posts = PostModel.objects.filter(post_owner__in=followed_people)
+        
     
     context = {
         'current_profile':current_profile,
