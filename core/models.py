@@ -47,8 +47,8 @@ class PostModel(models.Model):
         ordering = ('-post_date',)
 
 class LikeModel(models.Model):
-    like_owner = models.ForeignKey(User,related_name='liker',on_delete=models.CASCADE)
-    liked_post = models.ForeignKey(PostModel,related_name='liked',on_delete=models.CASCADE)
+    like_owner = models.ForeignKey(User,related_name='liker',on_delete=models.CASCADE,default="1")
+    liked_post = models.ForeignKey(PostModel,related_name='liked',on_delete=models.CASCADE,default="1")
     liked_at = models.DateTimeField(auto_now_add=True)
 
     def __str__(self):

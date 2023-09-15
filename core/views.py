@@ -4,7 +4,8 @@ from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 from .forms import UserRegisterForm, UserProfileForm, UserPersonalProfileForm,PostUploadForm
 from django.contrib.auth.models import User
-from .models import ProfileUser,UserFollowing,PostModel
+from django.db.models import Count
+from .models import ProfileUser,UserFollowing,PostModel,LikeModel
 
 
 
@@ -14,13 +15,14 @@ def index(request):
     current_profile = ProfileUser.objects.get(user=current_user)
     upload_form = PostUploadForm(request.POST or None,request.FILES)
     followed_people = UserFollowing.objects.filter(user_id=current_user).values('following_user_id')
-    posts = PostModel.objects.filter(post_owner__in=followed_people)
-        
+    posts = PostModel.objects.filter(post_owner__in=followed_people).annotate(like_count = Count('liked'))
+    likes = LikeModel.objects.filter(liked_post__in=posts.values('id'))
     
     context = {
         'current_profile':current_profile,
         'upload_form':upload_form,
         'posts':posts,
+        'likes':likes
         
     }
 
@@ -110,9 +112,9 @@ def profile(request, pk):
     post_number = current_user.poster.all().count()
     current_active_user = request.user
     current_profile = ProfileUser.objects.get(user=current_user)
-    following_num = current_user.following.all().count()-1
-    followers_num = current_user.followers.all().count()-1
-    takip = current_user.following.filter(following_user_id=current_user).exists()
+    following_num = (current_user.following.all().count())-1
+    followers_num = (current_user.followers.all().count())-1
+    takip = current_active_user.following.filter(following_user_id=current_user).exists()
     post_content = current_user.poster.all()
     context = {
         'current_user':current_user,
@@ -125,7 +127,7 @@ def profile(request, pk):
     }
     if request.method == 'POST':
         if takip:
-           current_user.followers.get(following_user_id=current_user).delete()
+           current_active_user.following.filter(following_user_id=current_user).delete()
            context['followers_num'] -=1
            context['takip'] = False
         else:
