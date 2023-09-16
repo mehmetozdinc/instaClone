@@ -40,11 +40,15 @@ class PostModel(models.Model):
     post_caption = models.TextField()
     post_date = models.DateTimeField(auto_now_add=True)
     post_owner = models.ForeignKey(User,related_name='poster',on_delete=models.CASCADE)
+    like = models.ManyToManyField(User,related_name='like',blank=True,through='LikeModel')
 
     def __str__(self):
         return f"{self.post_owner} uploaded new photo at {self.post_date}"
     class Meta:
         ordering = ('-post_date',)
+
+
+#like modeli silinerek PostModel'in altında bir column olarak ManytoManyField şeklinde eklenecek. Böylelikle elle yapacağımız işlem program tarafından yapılacak
 
 class LikeModel(models.Model):
     like_owner = models.ForeignKey(User,related_name='liker',on_delete=models.CASCADE,default="1")

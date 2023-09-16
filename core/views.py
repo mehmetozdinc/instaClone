@@ -16,13 +16,15 @@ def index(request):
     upload_form = PostUploadForm(request.POST or None,request.FILES)
     followed_people = UserFollowing.objects.filter(user_id=current_user).values('following_user_id')
     posts = PostModel.objects.filter(post_owner__in=followed_people).annotate(like_count = Count('liked'))
-    likes = LikeModel.objects.filter(liked_post__in=posts.values('id'))
+    # likes = LikeModel.objects.filter(liked_post__in=posts.values('id'))
     
+    
+
+
     context = {
         'current_profile':current_profile,
         'upload_form':upload_form,
-        'posts':posts,
-        'likes':likes
+        'posts':posts
         
     }
 

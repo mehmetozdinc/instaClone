@@ -291,7 +291,11 @@
                                             <img src="{% static 'assets/images/avatars/avatar-2.jpg' %}" alt="" class="w-6 h-6 rounded-full border-2 border-white  -ml-2">
                                         </div>
                                         <div class="">
-                                            Liked <strong> taiye</strong> and <strong> {{post.like_count}} Others </strong>
+                                            {% if  %}
+                                            {% elif %}
+                                            {% else %}
+                                            {% endif %}
+                                            Liked <strong> taiye</strong> and <strong> {{post.like_count|add:"-1"}} Others </strong>
                                         </div>
                                     </div>
                                     <!--Comment menu
