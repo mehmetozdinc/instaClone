@@ -7,7 +7,7 @@ from django.contrib.auth.models import User
 from django.db.models import Count
 from .models import ProfileUser,UserFollowing,PostModel,LikeModel
 
-#Bu mehmet yorumudur.
+
 
 
 @login_required(login_url='signin')
@@ -19,7 +19,7 @@ def index(request):
     posts = PostModel.objects.filter(post_owner__in=followed_people).annotate(like_count = Count('liked'))
     # likes = LikeModel.objects.filter(liked_post__in=posts.values('id'))
     
-    
+
 
 
     context = {
@@ -37,6 +37,16 @@ def index(request):
         return redirect('index')
         
     return render(request,'index.html',context)
+
+def like(request,pk):
+    current_user = request.user
+    current_post = PostModel.objects.get(id=pk)
+    if current_user.liker.filter(liked_post=current_post).exists():
+        current_user.liker.filter(liked_post=current_post).delete()
+    else:
+        LikeModel.objects.create(like_owner=current_user,liked_post=current_post).save()
+    return redirect('index')
+    
 
 
 def signin(request):
